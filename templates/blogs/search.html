@@ -1,0 +1,24 @@
+{% extends 'blogs/base.html' %}
+
+{% block title %}Search{% endblock title %}
+
+{% block content %}
+<h3 class="text-warning" style="letter-spacing: 2px;">Search Term - {{ query }}</h3>
+<div class="row mb-2">
+  {% if blogs %}
+    {% for i in blogs %}
+    <div class="col-md-6">
+        <div class="card border-0" >
+        <div class="card-body">
+            <h3><a href="{% url 'single_blog' i.slug  %}" class="text-dark">{{ i.title }}</a></h3>
+            <small class="mb-1 text-muted">{{ i.created_at | timesince }} ago | {{ i.author }}</small>
+            <p class="card-text">{{ i.short_description | truncatewords:25 }}</p>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <h5 class="mt-4 ml-3">No post found.</h5>
+  {% endif %}  
+</div>
+{% endblock %}

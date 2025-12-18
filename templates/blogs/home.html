@@ -1,6 +1,6 @@
 {% extends "blogs/base.html" %}
 
-{% load static %}
+{% block title %}Home{% endblock title %}
 
 {% block content %}
     {% for post in featured_posts %}
@@ -22,7 +22,7 @@
           <div class="col-md-6">
             <div class="card border-0" >
               <div class="card-body">
-                <h3><a href="" class="text-dark">{{ post.title }}</a></h3>
+                <h3><a href="{% url 'single_blog' post.slug %}" class="text-dark">{{ post.title }}</a></h3>
                 <small class="mb-1 text-muted">{{ post.created_at | timesince }} ago | {{ post.author }}</small>
                 <p class="card-text">{{ post.short_description | truncatewords:25 }}</p>
               </div>
@@ -50,23 +50,19 @@
         <!-- /.blog-main -->
         <aside class="col-md-4 blog-sidebar">
           <div class="p-3 mb-3 bg-light rounded">
-            <h4 class="font-italic">About</h4>
-            <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-              Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-              when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-            </p>
+            <h4 class="font-italic">{{ about.about_heading }}</h4>
+            <p class="mb-0">{{ about.about_description }}</p>
           </div>
-          {% comment %} {% if social_links %} {% endcomment %}
+          {% if social_links %}
           <div class="p-3">
             <h4 class="font-italic">Follow Us</h4>
             <ol class="list-unstyled">
-              {% comment %} {% for i in social_links %} {% endcomment %}
-              <li><a href="" target="_blank">Facebook</a></li>
-              <li><a href="" target="_blank">Linkedn</a></li>
-              {% comment %} {% endfor %} {% endcomment %}
+              {% for i in social_links %}
+                <li><a href="{{ i.link }}" target="_blank">{{ i.platform }}</a></li>                
+              {% endfor %}
             </ol>
           </div>
-          {% comment %} {% endif %} {% endcomment %}
+          {% endif %}
         </aside><!-- /.blog-sidebar -->
       </div><!-- /.row -->
     </main><!-- /.container -->
