@@ -43,17 +43,15 @@
 
       <div class="nav-scroller py-1 mb-2">
         <nav class="nav d-flex justify-content-between">
-          {% for cat in categories %}
-            <a class="p-2 text-muted" href="">{{ cat.category_name }}</a>
+          {% for category in categories %}
+            <a class="p-2 text-muted" href="{% url 'posts_by_category' category.id %}">{{ category.category_name }}</a>
           {% endfor %}
         </nav>
       </div>
-
     <!-- Main Content Part -->
     {% block content %}
 
     {% endblock %}
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <!-- Footer Part -->
     <footer class="blog-footer">
         <p>Django blog is built by <a href="#">Albert</a></p>
