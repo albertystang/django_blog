@@ -1,8 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
 from django.db.models import Q
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 from .models import Category, Blog
 from assignments.models import About
+from .forms import RegistrationForm
 
 
 def home(request):
@@ -45,4 +49,43 @@ def search(request):
         'keyword': query,
     }
     return render(request, 'blogs/search.html', context)
-    
+
+
+def register_user(request):
+    form = RegistrationForm()
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()            
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'You have registered successfully...')
+                return redirect('home')
+            else:
+                messages.success(request, ("There was an error in registering, please try again..."))
+                return redirect('register')
+    return render(request, 'blogs/register.html', {'form': form})
+
+
+def login_user(request):
+    form = AuthenticationForm()    
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'You have logged in successfully...')
+                return redirect('home')
+            else:                
+                messages.success(request, 'There was an error in loggin in. Please try again...')            
+        else:
+            messages.success(request, 'There was an error in filling out the login form. Please try again...')   
+    return render(request, 'blogs/login.html', {'form': form})        
+        
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, 'You have logged out successfully...')
+    return redirect('home')
