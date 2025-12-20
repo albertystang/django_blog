@@ -1,0 +1,32 @@
+{% extends "blogs/base.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <!-- left sidebar -->
+        {% include "dashboards/sidebar.html" %}        
+        <!-- right sidebar -->
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col">
+                    <div class="card border-default mb-3">
+                        <div class="card-header text-center text-uppercase font-weight-bold">All Categories</div>
+                        <div class="card-body text-dark">
+                            <h5 class="card-title text-center">{{ cat_count }}</h5>
+                        </div>
+                    </div>
+                </div>            
+                <div class="col">
+                    <div class="card border-default mb-3">
+                        <div class="card-header text-center text-uppercase font-weight-bold">All posts</div>
+                        <div class="card-body text-dark">
+                            <h5 class="card-title text-center">{{ blog_count }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div>
+    <br><br><br><br><br><br>
+{% endblock content %}

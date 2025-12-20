@@ -77,7 +77,7 @@ def login_user(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'You have logged in successfully...')
-                return redirect('home')
+                return redirect('dashboard')
             else:                
                 messages.success(request, 'There was an error in loggin in. Please try again...')            
         else:

@@ -15,6 +15,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = 'login'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -28,6 +30,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'blogs',
     'assignments',
+    'dashboards',
 ]
 
 MIDDLEWARE = [
