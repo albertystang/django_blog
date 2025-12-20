@@ -1,8 +1,10 @@
+import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.template.defaultfilters import slugify
 from blogs.models import Category, Blog
-from .forms import CategoryForm
+from .forms import CategoryForm, BlogPostForm
 
 
 @login_required
@@ -50,3 +52,51 @@ def delete_category(request, pk):
     category.delete()
     messages.success(request, 'The category has been deleted...')
     return redirect('categories')
+
+
+@login_required
+def posts(request):
+    posts = Blog.objects.all().order_by('-updated_at')
+    context = {'posts': posts}
+    return render(request, 'dashboards/posts.html', context)
+
+
+@login_required
+def add_post(request):
+    form = BlogPostForm()
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            title = form.cleaned_data['title']                       
+            post.slug = slugify(title) + '-' + str(uuid.uuid4())
+            post.save()
+            messages.success(request, 'The post has been added...')
+            return redirect('posts')
+    return render(request, 'dashboards/add_post.html', {'form': form})
+
+
+@login_required
+def edit_post(request, pk):
+    post = get_object_or_404(Blog, id=pk)    
+    form = BlogPostForm(instance=post)
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)            
+            title = form.cleaned_data['title']                       
+            post.slug = slugify(title) + '-' + str(uuid.uuid4())
+            post.save()
+            messages.success(request, 'The post has been updated...')
+            return redirect('posts')
+    context = {'post': post, 'form': form}
+    return render(request, 'dashboards/edit_post.html', context)
+
+
+@login_required
+def delete_post(request, pk):
+    post = get_object_or_404(Blog, id=pk)    
+    post.delete()
+    messages.success(request, 'The post has been deleted...')
+    return redirect('posts')
