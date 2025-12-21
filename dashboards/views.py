@@ -1,10 +1,11 @@
 import uuid
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from blogs.models import Category, Blog
-from .forms import CategoryForm, BlogPostForm
+from .forms import CategoryForm, BlogPostForm, AddUserForm, EditUserForm
 
 
 @login_required
@@ -100,3 +101,42 @@ def delete_post(request, pk):
     post.delete()
     messages.success(request, 'The post has been deleted...')
     return redirect('posts')
+
+
+@login_required
+def users(request):    
+    users = User.objects.all()
+    return render(request, 'dashboards/users.html', {'users': users})
+
+
+@login_required
+def add_user(request):
+    form = AddUserForm()
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'The user has been added...')
+            return redirect('users')
+    return render(request, 'dashboards/add_user.html', {'form': form})
+
+
+@login_required
+def edit_user(request, pk):
+    user = get_object_or_404(User, id=pk)
+    form = EditUserForm(instance=user)
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'The user has been updated...')
+            return redirect('users')
+    return render(request, 'dashboards/edit_user.html', {'form': form})
+
+
+@login_required
+def delete_user(request, pk):
+    user = get_object_or_404(User, id=pk)
+    user.delete()
+    messages.success(request, 'The user has been deleted...')
+    return redirect('users')   
