@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Category, Blog
+from .models import Category, Blog, Comment
 from assignments.models import About
 from .forms import RegistrationForm
 
@@ -38,7 +38,18 @@ def posts_by_category(request, cat_id):
 
 def single_blog(request, slug):
     single_blog = get_object_or_404(Blog, slug=slug, status='Published')
-    return render(request, 'blogs/single_blog.html', {'single_blog': single_blog})
+    if request.method == 'POST':        
+        comment = Comment()        
+        comment.user = request.user
+        comment.blog = single_blog
+        comment.comment = request.POST['comment']
+        comment.save()
+        messages.success(request, 'Your comment has been added to the post...')
+        return redirect('single_blog', single_blog.slug)
+    comments = Comment.objects.filter(blog=single_blog)
+    comment_count = comments.count()
+    context = {'single_blog': single_blog, 'comments': comments, 'comment_count': comment_count}    
+    return render(request, 'blogs/single_blog.html', context)
 
 
 def search(request):
